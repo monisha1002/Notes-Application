@@ -10,47 +10,64 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Gemini Notes App</a>
+        </div>
+    </nav>
+
     <div class="container my-5">
-        <h1 class="text-center mb-4">Gemini Notes App</h1>
-
-        <!-- Add New Note Form -->
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-primary text-white">
-                Add New Note
-            </div>
-            <div class="card-body">
-                <form id="note-form">
-                    <div class="mb-3">
-                        <label for="note-title" class="form-label">Title</label>
-                        <input type="text" class="form-control" id="note-title" required>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h4>Add a New Note</h4>
                     </div>
-                    <div class="mb-3">
-                        <label for="note-content" class="form-label">Content</label>
-                        <textarea class="form-control" id="note-content" rows="3" required></textarea>
+                    <div class="card-body">
+                        <form id="note-form">
+                            <div class="mb-3">
+                                <label for="note-title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="note-title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="note-content" class="form-label">Content</label>
+                                <textarea class="form-control" id="note-content" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Save Note</button>
+                        </form>
                     </div>
-                    <button type="submit" class="btn btn-success">Save Note</button>
-                </form>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h4>My Notes</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row row-cols-1 row-cols-md-2 g-4" id="notes-list">
+                            <!-- Notes will be loaded here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- Notes Display Area -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="notes-list">
-            <!-- Notes will be loaded here by JavaScript -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p>&copy; 2024 Gemini Notes App</p>
+    </footer>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="text-center mt-5 d-none">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
+        <p class="mt-2">Loading notes...</p>
+    </div>
 
-        <!-- Loading Spinner -->
-        <div id="loading-spinner" class="text-center mt-5 d-none">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-2">Loading notes...</p>
-        </div>
-
-        <!-- Error Message -->
-        <div id="error-message" class="alert alert-danger mt-4 d-none" role="alert">
-            An error occurred while loading notes. Please try again.
-        </div>
-
+    <!-- Error Message -->
+    <div id="error-message" class="alert alert-danger mt-4 d-none" role="alert">
+        An error occurred while loading notes. Please try again.
     </div>
 
     <!-- Bootstrap Bundle with Popper -->

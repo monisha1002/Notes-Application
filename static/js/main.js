@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const notesList = document.getElementById('notes-list');
     const loadingSpinner = document.getElementById('loading-spinner');
     const errorMessage = document.getElementById('error-message');
+    let currentNoteId = null;
 
     // Function to show/hide loading spinner
     const toggleLoading = (show) => {
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 notes.forEach(note => {
                     const noteCard = `
                         <div class="col">
-                            <div class="card note-card h-100 shadow-sm" data-id="${note.id}">
+                            <div class="card note-card h-100 shadow-sm" data-id="${note.id}" data-title="${note.title}" data-content="${note.content}">
                                 <div class="card-body">
                                     <h5 class="card-title">${note.title}</h5>
                                     <p class="card-text note-content">${note.content}</p>
@@ -57,6 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Add event listeners for delete buttons
                 document.querySelectorAll('.delete-note-btn').forEach(button => {
                     button.addEventListener('click', handleDeleteNote);
+                });
+                // Add event listeners for edit
+                document.querySelectorAll('.note-card').forEach(card => {
+                    card.addEventListener('click', handleEditNote);
                 });
             }
         } catch (error) {
@@ -72,10 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const title = noteTitleInput.value;
         const content = noteContentInput.value;
-
-        // In a more complex app, you'd handle update logic here as well
-        // For now, we're just adding new notes
-        const noteData = { title, content };
+        const noteData = { title, content, id: currentNoteId };
 
         try {
             const response = await fetch('/notes', {
@@ -92,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             noteTitleInput.value = '';
             noteContentInput.value = '';
+            currentNoteId = null;
+            noteForm.querySelector('button[type="submit"]').textContent = 'Save Note';
             fetchNotes(); // Refresh notes list
         } catch (error) {
             console.error('Error saving note:', error);
@@ -101,44 +105,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to handle deleting a note
     const handleDeleteNote = async (event) => {
+        event.stopPropagation();
         const noteId = event.target.dataset.id;
         if (!confirm('Are you sure you want to delete this note?')) {
             return;
         }
 
         try {
-            // Note: Our current Flask app doesn't have a DELETE endpoint.
-            // For this example, I'll simulate a delete or modify the PUT to handle it.
-            // For a proper DELETE, you would implement a new Flask route:
-            // @app.route('/notes/<id>', methods=['DELETE'])
-            // For now, we'll just remove it from the UI after confirmation.
-            // To implement a real delete, you would typically send a DELETE request
-            // to a specific note ID endpoint.
+            const response = await fetch(`/notes/${noteId}`, {
+                method: 'DELETE',
+            });
 
-            // Since the request only asked for PUT/GET, I'll remove it from the UI
-            // and log a message. To fully implement delete, a new DELETE /notes/<id>
-            // endpoint would be needed in app.py.
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-            // Simulate UI removal
-            event.target.closest('.col').remove();
-            alert('Note deleted (from UI). Full deletion requires backend DELETE endpoint.');
-            console.warn(`Attempted to delete note with ID: ${noteId}. A backend DELETE /notes/<id> endpoint is needed for full persistence.`);
-
-            // Or, if modifying PUT to handle delete (less RESTful):
-            // const response = await fetch('/notes', {
-            //     method: 'PUT',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ id: noteId, _delete: true }) // Custom flag for deletion
-            // });
-            // if (!response.ok) {
-            //     throw new Error(`HTTP error! status: ${response.status}`);
-            // }
-            // fetchNotes();
-
+            fetchNotes(); // Refresh notes list
         } catch (error) {
             console.error('Error deleting note:', error);
             alert('Failed to delete note. Please try again.');
         }
+    };
+    
+    // Function to handle editing a note
+    const handleEditNote = (event) => {
+        const card = event.currentTarget;
+        currentNoteId = card.dataset.id;
+        noteTitleInput.value = card.dataset.title;
+        noteContentInput.value = card.dataset.content;
+        noteForm.querySelector('button[type="submit"]').textContent = 'Update Note';
     };
 
 

@@ -1,0 +1,30 @@
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/notes-app-repo/notes-app:$COMMIT_SHA', '.']
+    dir: 'notes-app'
+
+  # Push the Docker image to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/notes-app-repo/notes-app:$COMMIT_SHA']
+    dir: 'notes-app'
+
+  # Deploy to Google Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'notes-app' # Service name
+      - '--image'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/notes-app-repo/notes-app:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1' # Region
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated' # Adjust based on your authentication needs
+      - '--set-env-vars'
+      - 'GOOGLE_APPLICATION_CREDENTIALS=/app/key.json' # This is for local dev, for Cloud Run use service account
+    dir: 'notes-app'
+
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/notes-app-repo/notes-app:$COMMIT_SHA'

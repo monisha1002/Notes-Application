@@ -64,5 +64,15 @@ def create_or_update_note():
         app.logger.error(f"Error creating/updating note: {e}")
         return jsonify({"error": "Failed to create/update note"}), 500
 
+@app.route('/notes/<id>', methods=['DELETE'])
+def delete_note(id):
+    """API endpoint to delete a note."""
+    try:
+        notes_collection.document(id).delete()
+        return jsonify({"message": "Note deleted successfully"}), 200
+    except Exception as e:
+        app.logger.error(f"Error deleting note: {e}")
+        return jsonify({"error": "Failed to delete note"}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
