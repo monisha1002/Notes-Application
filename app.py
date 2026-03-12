@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request
+from flask import Flask, request, render_template
 from google.cloud import firestore
 from dotenv import load_dotenv
 
@@ -11,6 +11,10 @@ app = Flask(__name__)
 # Initialize Firestore DB
 db = firestore.Client()
 notes_collection = db.collection('notes')
+
+@app.route('/')
+def home():
+    return render_template("index.html")
 
 @app.route('/notes', methods=['POST'])
 def add_note():
