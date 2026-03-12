@@ -20,7 +20,7 @@ def add_note():
     content = data.get('content')
 
     try:
-        doc_ref = db.collection("notes").add({'title': title, 'content': content})
+        doc_ref = db.collection("notes").document(title).set({'title': title, 'content': content})
         return {"message": "Note created successfully", "id": doc_ref[1].id}
     except Exception as e:
         app.logger.error(f"Error creating note: {e}")
