@@ -1,14 +1,14 @@
 steps:
   # Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/notes-app-repo/notes-app','-f','Dockerfile','.']
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/notes-app-repo/notes-app:$TAG_NAME','-f','Dockerfile','.']
 
   # Push the Docker image to Google Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/notes-app-repo/notes-app']
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/notes-app-repo/notes-app:$TAG_NAME']
 
 images:
-  - 'us-central1-docker.pkg.dev/$PROJECT_ID/notes-app-repo/notes-app'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/notes-app-repo/notes-app:$TAG_NAME'
 
 options:
   logging: CLOUD_LOGGING_ONLY
