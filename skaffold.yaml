@@ -1,0 +1,8 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: notes-app
+
+manifests:
+  rawYaml:
+    - service.yaml
