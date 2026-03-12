@@ -14,14 +14,10 @@ def home():
 @app.route('/notes', methods=['PUT'])
 def add_note():
     """Create a new note from user input."""
-    data = request.json()
-  
+    data = request.json
 
     title = data.get('title')
     content = data.get('content')
-
-    if not title or not content:
-        return {"error": "Title and content are required"}, 400
 
     try:
         doc_ref = db.collection("notes").add({'title': title, 'content': content})
